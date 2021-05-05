@@ -1,0 +1,16 @@
+{
+    "name": "lenovo/mvcfw",
+    "authors": [
+        {
+            "name": "Dawid",
+            "email": "dawslusarek@gmail.com"
+        }   
+    ],
+    "description": "It's a test",
+    "autoload": {
+        "psr-4": {
+            "app\\":"./"
+        }
+    },
+    "require": {}
+}
