@@ -18,6 +18,10 @@ class Router
     {
         $this->routes['get'][$path] = $callback;
     }
+    public function post($path, $callback)
+    {
+        $this->routes['post'][$path] = $callback;
+    }
 
     public function resolve()
     {
@@ -26,7 +30,7 @@ class Router
         $callback = $this->routes[$method][$path] ?? false;
         if ($callback === false) {
             $this->response->setStatusCode(404);
-            return "Not found";
+            return $this->renderView("_404");
             exit;
         }
         if (is_string($callback)) {
@@ -34,10 +38,10 @@ class Router
         }
         return call_user_func($callback);
     }
-    public function renderView($view)
+    public function renderView($view, $params = [])
     {
         $layoutContent = $this->layoutContent();
-        $viewContent = $this->renderOnlyView($view);
+        $viewContent = $this->renderOnlyView($view, $params);
         return str_replace('{{content}}', $viewContent, $layoutContent);
         include_once Application::$ROOT_DIR . "/views/$view.php";
         // dzięki ob_start zanim załaduje się strona, podmienione zostanie {{content}} z widokiem
@@ -48,8 +52,11 @@ class Router
         include_once Application::$ROOT_DIR . "/views/layouts/main.php";
         return ob_get_clean(); // zwraca i czyści bufor
     }
-    protected function renderOnlyView($view)
+    protected function renderOnlyView($view, $params)
     {
+        foreach ($params as $key => $value) {
+            $$key = $value; //podwójny znak dolara, pobiera wartość $key i używa jej jako nazwy zmiennej
+        }
         ob_start();
         include_once Application::$ROOT_DIR . "/views/$view.php";
         return ob_get_clean();
